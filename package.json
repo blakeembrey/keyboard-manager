@@ -1,6 +1,6 @@
 {
   "name": "keyboard-manager",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Small keyboard shortcut management for DOM-based applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
