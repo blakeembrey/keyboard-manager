@@ -1,0 +1,51 @@
+{
+  "name": "keyboard-manager",
+  "version": "0.0.0",
+  "description": "Small keyboard shortcut management for DOM-based applications",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "lint": "tslint \"src/**/*.ts\" --project tsconfig.json --type-check",
+    "build": "rimraf dist && tsc",
+    "specs": "jest --coverage",
+    "bundle": "browserify debug/index.js -o debug/bundle.js",
+    "debug": "npm run build && npm run bundle",
+    "test": "npm run lint && npm run build && npm run specs",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/blakeembrey/keyboard-manager.git"
+  },
+  "keywords": [
+    "keyboard",
+    "shortcut",
+    "manager",
+    "event",
+    "priority",
+    "queue"
+  ],
+  "author": {
+    "name": "Blake Embrey",
+    "email": "hello@blakeembrey.com",
+    "url": "http://blakeembrey.me"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/blakeembrey/keyboard-manager/issues"
+  },
+  "homepage": "https://github.com/blakeembrey/keyboard-manager",
+  "devDependencies": {
+    "@types/jest": "^20.0.8",
+    "@types/node": "^8.0.28",
+    "browserify": "^14.4.0",
+    "jest": "^21.1.0",
+    "rimraf": "^2.5.4",
+    "tslint": "^5.0.0",
+    "tslint-config-standard": "^6.0.1",
+    "typescript": "^2.2.1"
+  }
+}
