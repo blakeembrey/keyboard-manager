@@ -3,8 +3,10 @@ const { Keyboard } = require('..')
 const keyboard = new Keyboard()
 const outputEl = document.getElementById('key')
 
-keyboard.attach()
+keyboard.addListener(function (e, combo) {
+  e.preventDefault()
 
-keyboard.listen(function (combo) {
   outputEl.textContent = combo
 })
+
+window.addEventListener('keydown', keyboard.getHandler(), false)

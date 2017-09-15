@@ -16,6 +16,8 @@ npm install keyboard-manager --save
 
 ## Usage
 
+**Keyboard Manager** uses a simple queue, processed from newest to oldest, of listener functions to execute keyboard shortcuts. Keyboard event propagation stops when handled, but returning `true` from the listener will continue propagation to older listeners.
+
 ```js
 import { Keyboard, stringifyKey, createShortcuts } from 'keyboard-manager'
 
@@ -36,13 +38,19 @@ window.addEventListener('keydown', keyboard.getHandler(), false)
 new Keyboard().addListener(keyboard.getListener())
 ```
 
-* The `stringifyKey` function returns a string that is used to identify the keyboard shortcut.
-* Returning `true` from a listener function will enable keyboard shortcut propagation.
-  * Use this feature to enable keyboard shortcut "scopes".
-* The second argument to `createShortcuts` is a boolean `returnValue`, used when no shortcut matches
-  * Defaults to `true`, set to `false` to disable propagation and create a new keyboard "scope".
+### Stringify Key
 
-### Filter Input Keyboard Events
+The `stringifyKey(...keys)` function returns a consistent identity string for the keyboard shortcut. Internally, `keyboardEventCombo(e)` will map keyboard events to the matching string.
+
+### Create Shortcuts
+
+The `createShortcuts(map [, returnValue])` function accepts a map of keyboard shortcut functions and returns a single listener function for mounting with `keyboard.addListener(callback)`.
+
+**Tip:** `returnValue` defaults to `true` for propagation. Setting to `false` will stop propagation, effectively creating a new shortcut "scope". This is useful for features, such as full-screen modals or recording keyboard shortcuts, where key presses should not interact with the rest of the document.
+
+### Filter Input Event
+
+Wrap any listener in `filterInputEvent(callback)` to automatically ignore and propagate events originating from an input-like element (`<input />`, `<select />`, `<textarea />` or content-editable elements).
 
 ```js
 import { stringifyKey, createShortcuts, filterInputEvent } from 'keyboard-manager'
@@ -52,32 +60,30 @@ const listener = createShortcuts({
 })
 ```
 
-Wrap an event handler in `filterInputEvent` to ignore keys originating from input-like elements (`<input />`, `<select />`, `<textarea />` or content editable elements).
-
 ### Combined Shortcuts Pattern
 
 ```js
 const dispatcher = new Keyboard()
 
-// Create two `Keyboard` instances, allowing the globally unhandled shortcuts
-// to propagate to the application shortcuts.
+// Create two `Keyboard` instances, allowing globally unhandled shortcuts
+// to propagate into application shortcuts (i.e. OS-like functionality).
 const appKeyboard = new Keyboard()
 const globalKeyboard = new Keyboard()
 
-// Dispatch order is determined by listeners, newest listeners execute first.
+// Dispatch order is determined by listeners, recent listeners execute first.
 dispatcher.addListener(appKeyboard.getListener())
 dispatcher.addListener(globalKeyboard.getListener()))
 ```
 
 ## How?
 
-**Keyboard Manager** maps each `keydown` event to the character code (`e.which`) and modifiers (`e.shiftKey`, `e.ctrlKey`, `e.altKey`, `e.metaKey`).
+**Keyboard Manager** maps each `keydown` event to the character code (`e.which`) and modifiers (`e.shiftKey`, `e.ctrlKey`, `e.altKey`, `e.metaKey`). For example, `cmd + a` maps to `65 91`.
 
 ### Why not use `keydown` and `keyup` for infinite key combos?
 
 1. Mac OS doesn't emit `keyup` events while `cmd` is pressed.
-2. The DOM won't receive a `keyup` event when you focus out of the window.
-3. Keyboard shortcuts don't usually combine non-modifier characters.
+2. The DOM won't receive a `keyup` event when you lose focus on the window.
+3. Keyboard shortcuts don't need to combine non-modifier characters.
 
 ## TypeScript
 
