@@ -16,25 +16,42 @@ npm install keyboard-manager --save
 
 ## Usage
 
-```ts
-import { Keyboard } from 'keyboard-manager'
+```js
+import { Keyboard, stringifyKey, createShortcuts } from 'keyboard-manager'
 
 const keyboard = new Keyboard()
-
-// Attach keyboard listener to the `window`.
-keyboard.attach()
-keyboard.detach()
+const shortcut1 = stringifyKey('cmd', 'a') //=> "65 91"
+const shortcut2 = stringifyKey('cmd', 'up') //=> "38 91"
 
 // Bind event listeners globally or to a key.
-keyboard.bind(['cmd', 'a'], (e) => e.preventDefault())
-keyboard.listen((combo, e) => console.log(combo))
+keyboard.addListener(createShortcuts({
+  [shortcut1]: e => e.preventDefault(),
+  [shortcut2]: e => e.preventDefault()
+}))
 
-// Remove event listeners.
-keyboard.unbind(['cmd', 'a'], ...)
-keyboard.stopListening(...)
+// Attach event listener.
+window.addEventListener('keydown', keyboard.getHandler(), false)
+
+// Mount a keyboard listener inside another listener.
+new Keyboard().addListener(keyboard.getListener())
 ```
 
-**Tip:** When a keyboard shortcut matches, only the final callback is executed. This allows keyboard shortcuts to be added throughout an application, and only the last bound callback will be trigged.
+**Tip:** Returning `true` from your listener function will enable shortcut propagation. This enables you to create arbitrary shortcut "scopes" in your keyboard stack. For instance, the second argument to `createShortcuts` is the return value (default: `true`), used when no shortcut matches, and can be set to `false` to disable propagation.
+
+### Combined Shortcuts Pattern
+
+```js
+const dispatcher = new Keyboard()
+
+// Create two `Keyboard` instances, allowing the globally unhandled shortcuts
+// to propagate to the application shortcuts.
+const appKeyboard = new Keyboard()
+const globalKeyboard = new Keyboard()
+
+// Dispatch order is determined by listeners, last listener executes first.
+dispatcher.addListener(appKeyboard.getListener())
+dispatcher.addListener(globalKeyboard.getListener()))
+```
 
 ## How?
 

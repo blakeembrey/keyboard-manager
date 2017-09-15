@@ -1,7 +1,7 @@
 /**
  * Source: https://github.com/madrobby/keymaster/blob/3b1f2afabf1569848dea8b697ac418f19b601a30/keymaster.js
  */
-export const keyMap: { [code: string]: number } = {
+export const KEY_MAP: { [code: string]: number } = {
   '⇧': 16, shift: 16,
   '⌥': 18, alt: 18, option: 18,
   '⌃': 17, ctrl: 17, control: 17,
@@ -10,11 +10,9 @@ export const keyMap: { [code: string]: number } = {
   backspace: 8, tab: 9, clear: 12,
   enter: 13, return: 13,
   esc: 27, escape: 27, space: 32,
-  left: 37, up: 38,
-  right: 39, down: 40,
+  left: 37, up: 38, right: 39, down: 40,
   del: 46, delete: 46,
-  home: 36, end: 35,
-  pageup: 33, pagedown: 34,
+  home: 36, end: 35, pageup: 33, pagedown: 34,
   ',': 188, '.': 190, '/': 191,
   '`': 192, '-': 189, '=': 187,
   ';': 186, '\'': 222,
@@ -24,28 +22,61 @@ export const keyMap: { [code: string]: number } = {
 /**
  * Valid modifier keys.
  */
-export const modifiers = [16, 17, 18, 91, 93, 224]
+export const MODIFIERS = [16, 17, 18, 91, 93, 224]
+
+/**
+ * Continue propagating the event to older listeners.
+ */
+export const SHOULD_PROPAGATE = true
 
 /**
  * Stringify a keyboard event.
  */
-export function stringifyKey (e: KeyboardEvent) {
+export function keyboardEventCombo (e: KeyboardEvent) {
   const keys = []
 
-  if (e.shiftKey) keys.push(keyMap.shift)
-  if (e.ctrlKey) keys.push(keyMap.ctrl)
-  if (e.altKey) keys.push(keyMap.alt)
-  if (e.metaKey) keys.push(keyMap.meta)
-  if (modifiers.indexOf(e.which) === -1) keys.push(e.which)
+  if (e.shiftKey) keys.push(KEY_MAP.shift)
+  if (e.ctrlKey) keys.push(KEY_MAP.ctrl)
+  if (e.altKey) keys.push(KEY_MAP.alt)
+  if (e.metaKey) keys.push(KEY_MAP.meta)
+  if (MODIFIERS.indexOf(e.which) === -1) keys.push(e.which)
 
   return keys.sort().join(' ')
+}
+
+/**
+ * Map keys to string.
+ */
+export function stringifyKey (...keys: (string | number)[]) {
+  return keys.map(key => {
+    if (typeof key === 'number') return key
+    if (KEY_MAP[key]) return KEY_MAP[key]
+    if (key.length !== 1) throw new TypeError(`Unknown key "${key}"`)
+    return key.toUpperCase().charCodeAt(0)
+  }).sort().join(' ')
 }
 
 /**
  * Event handlers.
  */
 export type EventHandler = (e: KeyboardEvent) => void
-export type ListenerHandler = (combo: string, e: KeyboardEvent) => void
+export type ListenerHandler = (combo: string, e: KeyboardEvent) => void | boolean
+
+/**
+ * Keyboard shortcut map.
+ */
+export interface Shortcuts {
+  [key: string]: EventHandler
+}
+
+/**
+ * Create a listener function from shortcuts.
+ */
+export function createShortcuts (shortcuts: Shortcuts, returnValue = SHOULD_PROPAGATE): ListenerHandler {
+  return function (combo, event) {
+    return shortcuts[combo] ? shortcuts[combo](event) : returnValue
+  }
+}
 
 /**
  * Keyboard manager library for mapping key events.
@@ -53,68 +84,35 @@ export type ListenerHandler = (combo: string, e: KeyboardEvent) => void
 export class Keyboard {
 
   listeners: ListenerHandler[] = []
-  shortcuts: { [key: string]: EventHandler[] } = Object.create(null)
 
-  constructor (public map = keyMap) {
-    // Listen and map to shortcut handler.
-    this.listen((combo, e) => {
-      const callbacks = this.shortcuts[combo]
-      if (!callbacks) return
-      const callback = callbacks[callbacks.length - 1]
-      callback(e)
-    })
-  }
-
-  onKeyDown: EventHandler = (e) => {
-    const combo = stringifyKey(e)
-
-    for (const callback of this.listeners) callback(combo, e)
-  }
-
-  mapKeys (keys: string | (string | number)[]) {
-    if (!Array.isArray(keys)) return keys
-
-    return keys.map(key => {
-      if (typeof key === 'number') return key
-      if (this.map[key]) return this.map[key]
-      if (key.length > 1) throw new TypeError(`Unknown key: ${key}`)
-      return key.toUpperCase().charCodeAt(0)
-    }).sort().join(' ')
-  }
-
-  listen (callback: ListenerHandler) {
+  addListener (callback: ListenerHandler) {
     return this.listeners.push(callback)
   }
 
-  stopListening (callback: ListenerHandler) {
+  removeListener (callback: ListenerHandler) {
     const indexOf = this.listeners.indexOf(callback)
     if (indexOf > -1) this.listeners.splice(indexOf, 1)
     return indexOf
   }
 
-  bind (keys: string | string[], callback: EventHandler) {
-    const key = this.mapKeys(keys)
-    if (!this.shortcuts[key]) this.shortcuts[key] = []
-    return this.shortcuts[key].push(callback)
+  getHandler () {
+    const listener = this.getListener()
+
+    return (event: KeyboardEvent) => {
+      return listener(keyboardEventCombo(event), event)
+    }
   }
 
-  unbind (keys: string | string[], callback: EventHandler) {
-    const key = this.mapKeys(keys)
+  getListener (returnValue = SHOULD_PROPAGATE): ListenerHandler {
+    return (combo, event) => {
+      let len = this.listeners.length
 
-    if (!this.shortcuts[key]) return -1
+      while (len--) {
+        if (this.listeners[len](combo, event) !== SHOULD_PROPAGATE) return undefined
+      }
 
-    const indexOf = this.shortcuts[key].indexOf(callback)
-    if (indexOf > -1) this.shortcuts[key].splice(indexOf)
-    if (!this.shortcuts[key].length) delete this.shortcuts[key]
-    return indexOf
-  }
-
-  attach (element = window) {
-    element.addEventListener('keydown', this.onKeyDown, false)
-  }
-
-  detach (element = window) {
-    element.removeEventListener('keydown', this.onKeyDown, false)
+      return returnValue
+    }
   }
 
 }
