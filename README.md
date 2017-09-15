@@ -48,7 +48,7 @@ const dispatcher = new Keyboard()
 const appKeyboard = new Keyboard()
 const globalKeyboard = new Keyboard()
 
-// Dispatch order is determined by listeners, last listener executes first.
+// Dispatch order is determined by listeners, newest listeners execute first.
 dispatcher.addListener(appKeyboard.getListener())
 dispatcher.addListener(globalKeyboard.getListener()))
 ```
