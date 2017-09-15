@@ -42,6 +42,18 @@ new Keyboard().addListener(keyboard.getListener())
 * The second argument to `createShortcuts` is a boolean `returnValue`, used when no shortcut matches
   * Defaults to `true`, set to `false` to disable propagation and create a new keyboard "scope".
 
+### Filter Input Keyboard Events
+
+```js
+import { stringifyKey, createShortcuts, filterInputEvent } from 'keyboard-manager'
+
+const listener = createShortcuts({
+  [stringifyKey('a')]: filterInputEvent(e => e.preventDefault())
+})
+```
+
+Wrap an event handler in `filterInputEvent` to ignore keys originating from input-like elements (`<input />`, `<select />`, `<textarea />` or content editable elements).
+
 ### Combined Shortcuts Pattern
 
 ```js

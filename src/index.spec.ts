@@ -10,7 +10,7 @@ describe('keyboard manager', () => {
     const handler = keyboard.getHandler()
 
     const listener = createShortcuts({
-      [stringifyKey('cmd', 'a')]: () => triggered++
+      [stringifyKey('cmd', 'a')]: () => { triggered++ }
     })
 
     keyboard.addListener(listener)
@@ -40,12 +40,12 @@ describe('keyboard manager', () => {
     dispatcher.addListener(globalKeyboard.getListener())
 
     globalKeyboard.addListener(createShortcuts({
-      [stringifyKey('cmd', 'a')]: () => globalTriggered++
+      [stringifyKey('cmd', 'a')]: () => { globalTriggered++ }
     }))
 
     appKeyboard.addListener(createShortcuts({
-      [stringifyKey('a')]: () => appTriggered++,
-      [stringifyKey('cmd', 'a')]: () => appTriggered++
+      [stringifyKey('a')]: () => { appTriggered++ },
+      [stringifyKey('cmd', 'a')]: () => { appTriggered++ }
     }))
 
     handler({ which: 'A'.charCodeAt(0), metaKey: true } as any)

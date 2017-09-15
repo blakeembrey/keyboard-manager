@@ -57,24 +57,46 @@ export function stringifyKey (...keys: (string | number)[]) {
 }
 
 /**
- * Event handlers.
+ * Keyboard event handler.
  */
-export type EventHandler = (e: KeyboardEvent) => void
-export type ListenerHandler = (combo: string, e: KeyboardEvent) => void | boolean
+export type KeyHandler = (e: KeyboardEvent, combo: string) => void | boolean
 
 /**
  * Keyboard shortcut map.
  */
 export interface Shortcuts {
-  [key: string]: EventHandler
+  [key: string]: KeyHandler
 }
 
 /**
  * Create a listener function from shortcuts.
  */
-export function createShortcuts (shortcuts: Shortcuts, returnValue = SHOULD_PROPAGATE): ListenerHandler {
-  return function (combo, event) {
-    return shortcuts[combo] ? shortcuts[combo](event) : returnValue
+export function createShortcuts (shortcuts: Shortcuts, returnValue = SHOULD_PROPAGATE): KeyHandler {
+  return function (event, combo) {
+    return shortcuts[combo] ? shortcuts[combo](event, combo) : returnValue
+  }
+}
+
+/**
+ * Check if a keyboard event originated from an input.
+ */
+export function isInputEvent (event: KeyboardEvent) {
+  const target = event.target as HTMLElement
+
+  return (
+    target.tagName === 'INPUT' ||
+    target.tagName === 'SELECT' ||
+    target.tagName === 'TEXTAREA' ||
+    target.isContentEditable
+  )
+}
+
+/**
+ * Function to wrap listener by filtering input events.
+ */
+export function filterInputEvent (listener: KeyHandler): KeyHandler {
+  return function (event, combo) {
+    return isInputEvent(event) ? SHOULD_PROPAGATE : listener(event, combo)
   }
 }
 
@@ -83,13 +105,13 @@ export function createShortcuts (shortcuts: Shortcuts, returnValue = SHOULD_PROP
  */
 export class Keyboard {
 
-  listeners: ListenerHandler[] = []
+  listeners: KeyHandler[] = []
 
-  addListener (callback: ListenerHandler) {
+  addListener (callback: KeyHandler) {
     return this.listeners.push(callback)
   }
 
-  removeListener (callback: ListenerHandler) {
+  removeListener (callback: KeyHandler) {
     const indexOf = this.listeners.indexOf(callback)
     if (indexOf > -1) this.listeners.splice(indexOf, 1)
     return indexOf
@@ -99,16 +121,16 @@ export class Keyboard {
     const listener = this.getListener()
 
     return (event: KeyboardEvent) => {
-      return listener(keyboardEventCombo(event), event)
+      return listener(event, keyboardEventCombo(event))
     }
   }
 
-  getListener (returnValue = SHOULD_PROPAGATE): ListenerHandler {
-    return (combo, event) => {
+  getListener (returnValue = SHOULD_PROPAGATE): KeyHandler {
+    return (event, combo) => {
       let len = this.listeners.length
 
       while (len--) {
-        if (this.listeners[len](combo, event) !== SHOULD_PROPAGATE) return undefined
+        if (this.listeners[len](event, combo) !== SHOULD_PROPAGATE) return undefined
       }
 
       return returnValue
