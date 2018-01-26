@@ -40,7 +40,7 @@
   "homepage": "https://github.com/blakeembrey/keyboard-manager",
   "devDependencies": {
     "@types/jest": "^21.1.0",
-    "@types/node": "^8.0.28",
+    "@types/node": "^9.4.0",
     "browserify": "^14.4.0",
     "jest": "^21.1.0",
     "rimraf": "^2.5.4",
