@@ -82,7 +82,7 @@ dispatcher.addListener(globalKeyboard.getListener()))
 
 ## How?
 
-**Keyboard Manager** maps each `keydown` event to the character code (`e.which`) and modifiers (`e.shiftKey`, `e.ctrlKey`, `e.altKey`, `e.metaKey`). For example, `cmd + a` maps to `65 91`.
+**Keyboard Manager** serializes each `keydown` event to the character (`e.key`) and modifiers (`e.shiftKey`, `e.ctrlKey`, `e.altKey`, `e.metaKey`). For example, `cmd + a` maps to `meta a`.
 
 ### Why not use `keydown` and `keyup` for infinite key combos?
 
