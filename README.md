@@ -4,7 +4,6 @@
 [![NPM downloads](https://img.shields.io/npm/dm/keyboard-manager.svg?style=flat)](https://npmjs.org/package/keyboard-manager)
 [![Build status](https://img.shields.io/travis/blakeembrey/keyboard-manager.svg?style=flat)](https://travis-ci.org/blakeembrey/keyboard-manager)
 [![Test coverage](https://img.shields.io/coveralls/blakeembrey/keyboard-manager.svg?style=flat)](https://coveralls.io/r/blakeembrey/keyboard-manager?branch=master)
-[![Greenkeeper badge](https://badges.greenkeeper.io/blakeembrey/keyboard-manager.svg)](https://greenkeeper.io/)
 
 > Small keyboard shortcut management for DOM-based applications.
 
