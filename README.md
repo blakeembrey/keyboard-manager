@@ -18,23 +18,25 @@ npm install keyboard-manager --save
 **Keyboard Manager** uses a simple queue, processed from newest to oldest, of listener functions to execute keyboard shortcuts. Keyboard event propagation stops when handled, but returning `true` from the listener will continue propagation to older listeners.
 
 ```js
-import { Keyboard, stringifyKey, createShortcuts } from 'keyboard-manager'
+import { Keyboard, stringifyKey, createShortcuts } from "keyboard-manager";
 
-const keyboard = new Keyboard()
-const shortcut1 = stringifyKey('cmd', 'a') //=> "65 91"
-const shortcut2 = stringifyKey('cmd', 'up') //=> "38 91"
+const keyboard = new Keyboard();
+const shortcut1 = stringifyKey("cmd", "a"); //=> "65 91"
+const shortcut2 = stringifyKey("cmd", "up"); //=> "38 91"
 
 // Bind event listeners to all combos or specific keys using `createShortcuts`.
-keyboard.addListener(createShortcuts({
-  [shortcut1]: e => e.preventDefault(),
-  [shortcut2]: e => e.preventDefault()
-}))
+keyboard.addListener(
+  createShortcuts({
+    [shortcut1]: e => e.preventDefault(),
+    [shortcut2]: e => e.preventDefault()
+  })
+);
 
 // Attach event listener to document.
-window.addEventListener('keydown', keyboard.getHandler(), false)
+window.addEventListener("keydown", keyboard.getHandler(), false);
 
 // Mount a keyboard inside another listener.
-new Keyboard().addListener(keyboard.getListener())
+new Keyboard().addListener(keyboard.getListener());
 ```
 
 ### Stringify Key
@@ -52,11 +54,15 @@ The `createShortcuts(map [, returnValue])` function accepts a map of keyboard sh
 Wrap any listener in `filterInputEvent(callback)` to automatically ignore and propagate events originating from an input-like element (`<input />`, `<select />`, `<textarea />` or content-editable elements).
 
 ```js
-import { stringifyKey, createShortcuts, filterInputEvent } from 'keyboard-manager'
+import {
+  stringifyKey,
+  createShortcuts,
+  filterInputEvent
+} from "keyboard-manager";
 
 const listener = createShortcuts({
-  [stringifyKey('a')]: filterInputEvent(e => e.preventDefault())
-})
+  [stringifyKey("a")]: filterInputEvent(e => e.preventDefault())
+});
 ```
 
 ### Combined Shortcuts Pattern

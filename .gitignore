@@ -1,7 +1,7 @@
 .DS_Store
+npm-debug.log
 .vscode
 coverage/
 node_modules/
-npm-debug.log
 dist/
-typings/
+dist.es2015/

@@ -4,17 +4,23 @@
   "description": "Small keyboard shortcut management for DOM-based applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "module": "dist.es2015/index.js",
+  "jsnext:main": "dist.es2015/index.js",
+  "sideEffects": false,
   "files": [
     "dist/"
   ],
   "scripts": {
-    "lint": "tslint \"src/**/*.ts\" --project tsconfig.json --type-check",
-    "build": "rimraf dist && tsc",
+    "prettier": "prettier --write",
+    "lint": "tslint \"src/**/*.{js,jsx,ts,tsx}\" --project tsconfig.json",
+    "format": "npm run prettier -- \"{.,src/**}/*.{js,jsx,ts,tsx,md,yml,yaml}\"",
+    "build": "rimraf dist/ dist.es2015/ && tsc && tsc -P tsconfig.es2015.json",
     "specs": "jest --coverage",
+    "test": "npm run -s lint && npm run -s build && npm run -s specs && npm run -s size",
+    "prepare": "npm run build",
+    "size": "size-limit",
     "bundle": "browserify debug/index.js -o debug/bundle.js",
-    "debug": "npm run build && npm run bundle",
-    "test": "npm run lint && npm run build && npm run specs",
-    "prepublish": "npm run build"
+    "debug": "npm run build && npm run bundle"
   },
   "repository": {
     "type": "git",
@@ -38,14 +44,57 @@
     "url": "https://github.com/blakeembrey/keyboard-manager/issues"
   },
   "homepage": "https://github.com/blakeembrey/keyboard-manager",
+  "jest": {
+    "roots": [
+      "<rootDir>/src/"
+    ],
+    "transform": {
+      "\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(tsx?|jsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
+  },
+  "size-limit": [
+    {
+      "path": "./dist/index.js",
+      "limit": "1 kB"
+    }
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,md,yml,yaml}": [
+      "npm run prettier",
+      "git add"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
-    "@types/jest": "^21.1.0",
-    "@types/node": "^8.0.28",
-    "browserify": "^14.4.0",
-    "jest": "^21.1.0",
-    "rimraf": "^2.5.4",
-    "tslint": "^5.0.0",
-    "tslint-config-standard": "^6.0.1",
-    "typescript": "^2.2.1"
+    "@size-limit/preset-small-lib": "^2.1.6",
+    "@types/jest": "^24.0.22",
+    "@types/node": "^12.12.6",
+    "browserify": "^16.5.0",
+    "husky": "^3.0.9",
+    "jest": "^24.9.0",
+    "lint-staged": "^9.4.2",
+    "prettier": "^1.18.2",
+    "rimraf": "^3.0.0",
+    "ts-jest": "^24.1.0",
+    "tslint": "^5.20.1",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-config-standard": "^9.0.0",
+    "typescript": "^3.7.2"
   }
 }
