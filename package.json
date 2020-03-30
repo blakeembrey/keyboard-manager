@@ -64,7 +64,7 @@
   "size-limit": [
     {
       "path": "./dist/index.js",
-      "limit": "1 kB"
+      "limit": "700 B"
     }
   ],
   "husky": {

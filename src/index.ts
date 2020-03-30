@@ -22,11 +22,6 @@ export const KEY_MAP: { [code: string]: string } = {
 };
 
 /**
- * Valid modifier keys.
- */
-export const MODIFIERS = ["shift", "control", "alt", "meta"];
-
-/**
  * Continue propagating the event to older listeners.
  */
 export const SHOULD_PROPAGATE = true;
@@ -35,13 +30,12 @@ export const SHOULD_PROPAGATE = true;
  * Stringify a keyboard event.
  */
 export function keyboardEventCombo(e: KeyboardEvent) {
-  const keys = new Set<string>();
+  const keys = new Set<string>([e.key.toLocaleLowerCase()]);
 
   if (e.shiftKey) keys.add("shift");
   if (e.ctrlKey) keys.add("control");
   if (e.altKey) keys.add("alt");
   if (e.metaKey) keys.add("meta");
-  if (MODIFIERS.indexOf(e.key) === -1) keys.add(e.key.toLowerCase());
 
   return Array.from(keys)
     .sort()
@@ -113,20 +107,19 @@ export class Keyboard {
   listeners: KeyHandler[] = [];
 
   addListener(callback: KeyHandler) {
-    return this.listeners.push(callback);
+    this.listeners.push(callback);
   }
 
   removeListener(callback: KeyHandler) {
     const indexOf = this.listeners.indexOf(callback);
     if (indexOf > -1) this.listeners.splice(indexOf, 1);
-    return indexOf;
   }
 
   getHandler() {
     const listener = this.getListener();
 
     return (event: KeyboardEvent) => {
-      return listener(event, keyboardEventCombo(event));
+      listener(event, keyboardEventCombo(event));
     };
   }
 
