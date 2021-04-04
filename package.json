@@ -8,7 +8,8 @@
   "jsnext:main": "dist.es2015/index.js",
   "sideEffects": false,
   "files": [
-    "dist/"
+    "dist/",
+    "dist.es2015/"
   ],
   "scripts": {
     "prettier": "prettier --write",
