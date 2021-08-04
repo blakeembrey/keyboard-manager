@@ -8,6 +8,7 @@ export const KEY_MAP = new Map<string, string>([
   ["⌃", "control"],
   ["ctrl", "control"],
   ["⌘", "meta"],
+  ["os", "meta"],
   ["cmd", "meta"],
   ["command", "meta"],
   ["caps", "capslock"],
@@ -15,10 +16,14 @@ export const KEY_MAP = new Map<string, string>([
   ["return", "enter"],
   ["esc", "escape"],
   ["space", " "],
+  ["spacebar", " "],
   ["left", "arrowleft"],
   ["up", "arrowup"],
   ["right", "arrowright"],
-  ["down", "arrowdown"]
+  ["down", "arrowdown"],
+  ["scroll", "scrolllock"],
+  ["del", "delete"],
+  ["apps", "contextmenu"]
 ]);
 
 /**
