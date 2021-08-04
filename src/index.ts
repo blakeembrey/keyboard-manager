@@ -2,17 +2,12 @@
  * Source: https://github.com/madrobby/keymaster/blob/3b1f2afabf1569848dea8b697ac418f19b601a30/keymaster.js
  */
 export const KEY_MAP = new Map<string, string>([
-  ["⇧", "shift"],
-  ["⌥", "alt"],
   ["option", "alt"],
-  ["⌃", "control"],
   ["ctrl", "control"],
-  ["⌘", "meta"],
   ["os", "meta"],
   ["cmd", "meta"],
   ["command", "meta"],
   ["caps", "capslock"],
-  ["tab", "tab"],
   ["return", "enter"],
   ["esc", "escape"],
   ["space", " "],
