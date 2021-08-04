@@ -1,25 +1,25 @@
 /**
  * Source: https://github.com/madrobby/keymaster/blob/3b1f2afabf1569848dea8b697ac418f19b601a30/keymaster.js
  */
-export const KEY_MAP: { [code: string]: string } = {
-  "⇧": "shift",
-  "⌥": "alt",
-  option: "alt",
-  "⌃": "control",
-  ctrl: "control",
-  "⌘": "meta",
-  cmd: "meta",
-  command: "meta",
-  caps: "capslock",
-  tab: "tab",
-  return: "enter",
-  esc: "escape",
-  space: " ",
-  left: "arrowleft",
-  up: "arrowup",
-  right: "arrowright",
-  down: "arrowdown"
-};
+export const KEY_MAP = new Map<string, string>([
+  ["⇧", "shift"],
+  ["⌥", "alt"],
+  ["option", "alt"],
+  ["⌃", "control"],
+  ["ctrl", "control"],
+  ["⌘", "meta"],
+  ["cmd", "meta"],
+  ["command", "meta"],
+  ["caps", "capslock"],
+  ["tab", "tab"],
+  ["return", "enter"],
+  ["esc", "escape"],
+  ["space", " "],
+  ["left", "arrowleft"],
+  ["up", "arrowup"],
+  ["right", "arrowright"],
+  ["down", "arrowdown"]
+]);
 
 /**
  * Continue propagating the event to older listeners.
@@ -27,10 +27,18 @@ export const KEY_MAP: { [code: string]: string } = {
 export const SHOULD_PROPAGATE = true;
 
 /**
+ * Normalize a key value to standard format.
+ */
+export function normalizeKey(key: string): string {
+  const value = String(key).toLocaleLowerCase();
+  return KEY_MAP.get(value) || value;
+}
+
+/**
  * Stringify a keyboard event.
  */
 export function keyboardEventCombo(e: KeyboardEvent) {
-  const keys = new Set<string>([String(e.key).toLocaleLowerCase()]);
+  const keys = new Set<string>([normalizeKey(e.key)]);
 
   if (e.shiftKey) keys.add("shift");
   if (e.ctrlKey) keys.add("control");
@@ -45,10 +53,9 @@ export function keyboardEventCombo(e: KeyboardEvent) {
 /**
  * Map keys to string.
  */
-export function stringifyKey(...keys: (string | number)[]) {
+export function stringifyKey(...keys: string[]) {
   return keys
-    .map(key => String(key).toLowerCase())
-    .map(key => (KEY_MAP.hasOwnProperty(key) ? KEY_MAP[key] : key))
+    .map(normalizeKey)
     .sort()
     .join(" ");
 }
@@ -104,15 +111,14 @@ export function filterInputEvent(listener: KeyHandler): KeyHandler {
  * Keyboard manager library for mapping key events.
  */
 export class Keyboard {
-  listeners: KeyHandler[] = [];
+  listeners = new Set<KeyHandler>();
 
   addListener(callback: KeyHandler) {
-    this.listeners.push(callback);
+    this.listeners.add(callback);
   }
 
   removeListener(callback: KeyHandler) {
-    const indexOf = this.listeners.indexOf(callback);
-    if (indexOf > -1) this.listeners.splice(indexOf, 1);
+    this.listeners.delete(callback);
   }
 
   getHandler() {
@@ -125,10 +131,12 @@ export class Keyboard {
 
   getListener(returnValue = SHOULD_PROPAGATE): KeyHandler {
     return (event, combo) => {
-      let len = this.listeners.length;
+      const listeners = Array.from(this.listeners);
+      let length = listeners.length;
 
-      while (len--) {
-        if (this.listeners[len](event, combo) !== SHOULD_PROPAGATE) return;
+      while (length--) {
+        const result = listeners[length](event, combo);
+        if (result !== SHOULD_PROPAGATE) return;
       }
 
       return returnValue;
