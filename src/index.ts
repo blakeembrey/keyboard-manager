@@ -45,7 +45,7 @@ export function keyboardEventCombo(e: KeyboardEvent) {
   if (e.altKey) keys.add("alt");
   if (e.metaKey) keys.add("meta");
 
-  return Array.from(keys).sort().join(" ");
+  return stringifyKey(...keys);
 }
 
 /**
