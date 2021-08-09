@@ -30,7 +30,7 @@ export const SHOULD_PROPAGATE = true;
  * Stringify a keyboard event.
  */
 export function keyboardEventCombo(e: KeyboardEvent) {
-  const keys = new Set<string>([e.key.toLocaleLowerCase()]);
+  const keys = new Set<string>([String(e.key).toLocaleLowerCase()]);
 
   if (e.shiftKey) keys.add("shift");
   if (e.ctrlKey) keys.add("control");
