@@ -4,4 +4,3 @@ npm-debug.log
 coverage/
 node_modules/
 dist/
-dist.es2015/

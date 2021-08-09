@@ -1,10 +1,10 @@
 # Keyboard Manager
 
-[![NPM version](https://img.shields.io/npm/v/keyboard-manager.svg)](https://npmjs.org/package/keyboard-manager)
-[![NPM downloads](https://img.shields.io/npm/dm/keyboard-manager.svg)](https://npmjs.org/package/keyboard-manager)
-[![Build status](https://img.shields.io/travis/blakeembrey/keyboard-manager.svg)](https://travis-ci.org/blakeembrey/keyboard-manager)
-[![Test coverage](https://img.shields.io/coveralls/blakeembrey/keyboard-manager.svg)](https://coveralls.io/r/blakeembrey/keyboard-manager?branch=master)
-[![Bundle size](https://img.shields.io/bundlephobia/minzip/keyboard-manager.svg)](https://bundlephobia.com/result?p=keyboard-manager)
+[![NPM version][npm-image]][npm-url]
+[![NPM downloads][downloads-image]][downloads-url]
+[![Build status][build-image]][build-url]
+[![Build coverage][coverage-image]][coverage-url]
+[![Bundle size][size-image]][size-url]
 
 > Small keyboard shortcut management for DOM-based applications.
 
@@ -28,8 +28,8 @@ const shortcut2 = stringifyKey("cmd", "up"); //=> "38 91"
 // Bind event listeners to all combos or specific keys using `createShortcuts`.
 keyboard.addListener(
   createShortcuts({
-    [shortcut1]: e => e.preventDefault(),
-    [shortcut2]: e => e.preventDefault()
+    [shortcut1]: (e) => e.preventDefault(),
+    [shortcut2]: (e) => e.preventDefault(),
   })
 );
 
@@ -58,11 +58,11 @@ Wrap any listener in `filterInputEvent(callback)` to automatically ignore and pr
 import {
   stringifyKey,
   createShortcuts,
-  filterInputEvent
+  filterInputEvent,
 } from "keyboard-manager";
 
 const listener = createShortcuts({
-  [stringifyKey("a")]: filterInputEvent(e => e.preventDefault())
+  [stringifyKey("a")]: filterInputEvent((e) => e.preventDefault()),
 });
 ```
 
@@ -98,3 +98,14 @@ This project is written using [TypeScript](https://github.com/Microsoft/TypeScri
 ## License
 
 Apache 2.0
+
+[npm-image]: https://img.shields.io/npm/v/keyboard-manager
+[npm-url]: https://npmjs.org/package/keyboard-manager
+[downloads-image]: https://img.shields.io/npm/dm/keyboard-manager
+[downloads-url]: https://npmjs.org/package/keyboard-manager
+[build-image]: https://img.shields.io/github/workflow/status/blakeembrey/keyboard-manager/CI/main
+[build-url]: https://github.com/blakeembrey/keyboard-manager/actions/workflows/ci.yml?query=branch%3Amain
+[coverage-image]: https://img.shields.io/codecov/c/gh/blakeembrey/keyboard-manager
+[coverage-url]: https://codecov.io/gh/blakeembrey/keyboard-manager
+[size-image]: https://img.shields.io/bundlephobia/minzip/keyboard-manager
+[size-url]: https://bundlephobia.com/result?p=keyboard-manager

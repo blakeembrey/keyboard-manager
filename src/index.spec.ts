@@ -12,7 +12,7 @@ describe("keyboard manager", () => {
     const listener = createShortcuts({
       [stringifyKey("cmd", "a")]: () => {
         triggered++;
-      }
+      },
     });
 
     keyboard.addListener(listener);
@@ -45,7 +45,7 @@ describe("keyboard manager", () => {
       createShortcuts({
         [stringifyKey("cmd", "a")]: () => {
           globalTriggered++;
-        }
+        },
       })
     );
 
@@ -56,7 +56,7 @@ describe("keyboard manager", () => {
         },
         [stringifyKey("cmd", "a")]: () => {
           appTriggered++;
-        }
+        },
       })
     );
 

@@ -18,7 +18,7 @@ export const KEY_MAP = new Map<string, string>([
   ["down", "arrowdown"],
   ["scroll", "scrolllock"],
   ["del", "delete"],
-  ["apps", "contextmenu"]
+  ["apps", "contextmenu"],
 ]);
 
 /**
@@ -45,19 +45,14 @@ export function keyboardEventCombo(e: KeyboardEvent) {
   if (e.altKey) keys.add("alt");
   if (e.metaKey) keys.add("meta");
 
-  return Array.from(keys)
-    .sort()
-    .join(" ");
+  return Array.from(keys).sort().join(" ");
 }
 
 /**
  * Map keys to string.
  */
 export function stringifyKey(...keys: string[]) {
-  return keys
-    .map(normalizeKey)
-    .sort()
-    .join(" ");
+  return keys.map(normalizeKey).sort().join(" ");
 }
 
 /**
