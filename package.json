@@ -22,6 +22,7 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
+    "debug": "site --src debug dev",
     "format": "ts-scripts format",
     "lint": "ts-scripts lint",
     "prepare": "ts-scripts install && ts-scripts build",
@@ -41,10 +42,12 @@
     "queue"
   ],
   "devDependencies": {
+    "@borderless/site": "^0.0.1",
     "@borderless/ts-scripts": "^0.5.0",
     "@size-limit/preset-small-lib": "^5.0.2",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.4.13",
+    "react": "^17.0.2",
     "typescript": "^4.3.5"
   },
   "types": "dist/index.d.ts",
