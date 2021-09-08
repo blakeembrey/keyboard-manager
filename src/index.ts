@@ -29,7 +29,7 @@ export const SHOULD_PROPAGATE = true;
 /**
  * Normalize a key value to standard format.
  */
-export function normalizeKey(key: string): string {
+export function normalizeKey(key: string | undefined): string {
   const value = String(key).toLocaleLowerCase();
   return KEY_MAP.get(value) || value;
 }
@@ -38,7 +38,7 @@ export function normalizeKey(key: string): string {
  * Stringify a keyboard event.
  */
 export function keyboardEventCombo(e: KeyboardEvent) {
-  const keys = new Set<string>([normalizeKey(e.key)]);
+  const keys = new Set<string>([e.key]);
 
   if (e.shiftKey) keys.add("shift");
   if (e.ctrlKey) keys.add("control");
