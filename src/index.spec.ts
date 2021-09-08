@@ -1,12 +1,15 @@
-import { Keyboard, createShortcuts, stringifyKey } from "./index";
+import { expectType } from "ts-expect";
+import { Keyboard, createShortcuts, stringifyKey, Event } from "./index";
+
+expectType<Event>({} as KeyboardEvent);
 
 describe("keyboard manager", () => {
   it("should manage keyboard shortcuts", () => {
     let triggered = 0;
 
     const keyboard = new Keyboard();
-    const event1: any = { key: "a", metaKey: true };
-    const event2: any = { key: "0" };
+    const event1: Event = { key: "a", metaKey: true };
+    const event2: Event = { key: "0" };
     const handler = keyboard.getHandler();
 
     const listener = createShortcuts({
@@ -60,12 +63,12 @@ describe("keyboard manager", () => {
       })
     );
 
-    handler({ key: "a", metaKey: true } as any);
+    handler({ key: "a", metaKey: true });
 
     expect(appTriggered).toEqual(0);
     expect(globalTriggered).toEqual(1);
 
-    handler({ key: "a" } as any);
+    handler({ key: "a" });
 
     expect(appTriggered).toEqual(1);
     expect(globalTriggered).toEqual(1);

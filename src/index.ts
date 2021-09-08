@@ -1,4 +1,21 @@
 /**
+ * Custom keyboard event interface with looser requirements than the native browser keyboard event, helpful for testing.
+ */
+export interface Event {
+  key?: string;
+  target?: EventTarget | HTMLElement | null;
+  shiftKey?: boolean;
+  ctrlKey?: boolean;
+  altKey?: boolean;
+  metaKey?: boolean;
+}
+
+/**
+ * Keyboard event listener.
+ */
+export type KeyboardEventListener = (event: Event) => void;
+
+/**
  * Source: https://github.com/madrobby/keymaster/blob/3b1f2afabf1569848dea8b697ac418f19b601a30/keymaster.js
  */
 export const KEY_MAP = new Map<string, string>([
@@ -37,8 +54,8 @@ export function normalizeKey(key: string | undefined): string {
 /**
  * Stringify a keyboard event.
  */
-export function keyboardEventCombo(e: KeyboardEvent) {
-  const keys = new Set<string>([e.key]);
+export function keyboardEventCombo(e: Event): string {
+  const keys = new Set<string | undefined>([e.key]);
 
   if (e.shiftKey) keys.add("shift");
   if (e.ctrlKey) keys.add("control");
@@ -51,14 +68,14 @@ export function keyboardEventCombo(e: KeyboardEvent) {
 /**
  * Map keys to string.
  */
-export function stringifyKey(...keys: string[]) {
+export function stringifyKey(...keys: (string | undefined)[]): string {
   return keys.map(normalizeKey).sort().join(" ");
 }
 
 /**
  * Keyboard event handler.
  */
-export type KeyHandler = (e: KeyboardEvent, combo: string) => void | boolean;
+export type KeyHandler = (event: Event, key: string) => void | boolean;
 
 /**
  * Keyboard shortcut map.
@@ -82,14 +99,16 @@ export function createShortcuts(
 /**
  * Check if a keyboard event originated from an input.
  */
-export function isInputEvent(event: KeyboardEvent) {
-  const target = event.target as HTMLElement;
+export function isInputEvent(event: Event): boolean {
+  const { target } = event;
 
   return (
-    target.tagName === "INPUT" ||
-    target.tagName === "SELECT" ||
-    target.tagName === "TEXTAREA" ||
-    target.isContentEditable
+    !!target &&
+    "tagName" in target &&
+    (target.tagName === "INPUT" ||
+      target.tagName === "SELECT" ||
+      target.tagName === "TEXTAREA" ||
+      target.isContentEditable)
   );
 }
 
@@ -108,18 +127,18 @@ export function filterInputEvent(listener: KeyHandler): KeyHandler {
 export class Keyboard {
   listeners = new Set<KeyHandler>();
 
-  addListener(callback: KeyHandler) {
+  addListener(callback: KeyHandler): void {
     this.listeners.add(callback);
   }
 
-  removeListener(callback: KeyHandler) {
+  removeListener(callback: KeyHandler): void {
     this.listeners.delete(callback);
   }
 
-  getHandler() {
+  getHandler(): KeyboardEventListener {
     const listener = this.getListener();
 
-    return (event: KeyboardEvent) => {
+    return (event: Event) => {
       listener(event, keyboardEventCombo(event));
     };
   }
