@@ -43,8 +43,8 @@
   ],
   "devDependencies": {
     "@borderless/site": "^0.0.2",
-    "@borderless/ts-scripts": "^0.5.0",
-    "@size-limit/preset-small-lib": "^5.0.2",
+    "@borderless/ts-scripts": "^0.15.0",
+    "@size-limit/preset-small-lib": "^11.2.0",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.4.13",
     "react": "^17.0.2",
